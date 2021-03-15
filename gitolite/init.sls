@@ -20,6 +20,7 @@ gitolite:
   user.present:
     - name: {{ gitolite_user }}
     - system: True
+    - shell: /bin/sh
     - home: /var/lib/gitolite
 
 /var/lib/gitolite/bin:

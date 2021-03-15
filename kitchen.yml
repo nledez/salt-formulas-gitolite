@@ -1,0 +1,45 @@
+---
+driver:
+  name: docker
+  use_sudo: false
+  remove_images: false
+  run_command: /lib/systemd/systemd
+  privileged: true
+  volume:
+    - "/sys/fs/cgroup:/sys/fs/cgroup:ro"
+
+provisioner:
+  name: salt_solo
+  is_file_root: true
+  require_chef: false
+  salt_copy_filter:
+    - .kitchen/
+    - .git
+    - test
+  state_top:
+    base:
+      "*":
+        - gitolite
+  pillars_from_files:
+    pillar.sls: test/pillar.sls
+  pillars:
+    top.sls:
+      base:
+        "*":
+          - pillar
+
+verifier:
+  name: inspec
+
+platforms:
+  - name: ubuntu-20.04
+  - name: ubuntu-18.04
+  - name: debian-stretch
+  - name: debian-buster
+
+suites:
+  - name: default
+    verifier:
+      inspec_tests:
+        - test/integration/default
+    attributes:
